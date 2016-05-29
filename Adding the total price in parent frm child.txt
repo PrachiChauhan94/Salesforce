@@ -1,0 +1,50 @@
+trigger adding on child__c (after insert, before delete, before update, after update) {
+    
+    List<Parent__c> l=new List<Parent__c>();
+    
+    if(Trigger.isInsert)
+    {
+        for(child__c c: Trigger.new)
+        {
+            Parent__c p=[Select total__c from Parent__c where id=:c.parentid__c];
+            p.total__c=p.total__c+c.price__c;
+            l.add(p);
+        }
+    }
+    
+     if(Trigger.isUpdate)
+    {
+        if(Trigger.isBefore)
+        {  
+            for(child__c c: Trigger.old)
+            { 
+                Parent__c p=[Select name,total__c from Parent__c where id=: c.parentid__c];
+                p.total__c=p.total__c-c.price__c; 
+                l.add(p);
+             }
+        }
+        if(Trigger.isAfter)
+        { 
+            for(child__c c: Trigger.new)
+            {
+                Parent__c p=[Select name,total__c from Parent__c where id=: c.parentid__c];
+                p.total__c=p.total__c+c.price__c;
+                l.add(p);
+            }
+        }
+    }
+    
+    
+    if(Trigger.isDelete)
+    {
+        for(child__c c: Trigger.old)
+        {
+            Parent__c p=[Select total__c from Parent__c where id=: c.parentid__c];
+            p.total__c=p.total__c-c.price__c;
+            l.add(p);
+        }
+    }
+    
+    update l;
+
+}

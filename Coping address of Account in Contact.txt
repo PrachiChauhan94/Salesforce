@@ -1,0 +1,15 @@
+trigger copyadd on Contact (before insert) {
+    
+   
+    for(Contact c: Trigger.new)
+    {
+        Account a = [Select BillingStreet, BillingCity, BillingState, BillingPostalCode, BillingCountry 
+                     from account where id=:c.AccountId];
+        
+        c.OtherStreet = a.BillingStreet;
+        c.OtherCity =  a.BillingCity;
+        c.OtherState= a.BillingState;
+        c.OtherPostalCode=a.BillingPostalCode;
+        c.OtherCountry= a.BillingCountry;  
+    }
+}

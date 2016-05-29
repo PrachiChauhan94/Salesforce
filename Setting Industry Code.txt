@@ -1,0 +1,24 @@
+//Write a trigger to set Industry_code (Custom field) of account as initials of industry name of account's Industry.
+
+//Example: If an Account's industry is "Cloud Computing" then its Industry code should be set to  "CC". 
+
+
+trigger trigger1 on Account (before update, before insert) {
+    
+    for (Account a : Trigger.new)
+    {
+        String name = a.Industry_name__c;
+        String[] b= new String[0];
+        b.add(name.substring(0,1));
+        for(integer i=0; i < name.length()-1; i++)
+        {
+              if(name.substring(i,i+1)==' ')
+               { b.add(name.substring(i+1,i+2));}
+        }   
+        
+        
+        String result = String.join(b,'');
+        a.Industry_code__c = result;
+        //update a.Industry_code__c; 
+    }    
+}

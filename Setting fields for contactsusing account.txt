@@ -1,0 +1,29 @@
+trigger conacc on Contact (before insert) {
+   
+   List<Account> l = new List<Account>();
+
+    for(Contact c: Trigger.new)
+    {
+      
+        List<Account> acc = [Select Id,name from account where name=:c.Organization__c];
+
+       if(acc.size()!=0)
+       {
+             c.AccountId=acc[0].Id;
+       }
+        
+       if(acc.size()==0)
+        {
+            Account a= new Account();
+            a.Name=c.Organization__c;
+            a.Industry_name__c='abc';
+            c.AccountId=a.Id;
+            l.add(a);
+        }
+        
+        
+    }
+    Set<Account> s=new Set<Account>(l);
+    List<Account> li= new List<Account>(s);
+    insert li;
+}

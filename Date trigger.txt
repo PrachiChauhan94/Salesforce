@@ -1,0 +1,27 @@
+trigger datetrig on Account (after insert) {
+    
+    List<TwelveGen__c> l = new List<TwelveGen__c>();
+    
+    for (Account ac : Trigger.new)
+    {
+        Date d = ac.Starting_date__c;
+        Integer i=0;
+       
+        for (i=0; i<12; i++)
+        {
+            Date df=d.toStartOfMonth();
+            Date de=df.addDays(Date.daysInMonth(df.year(), df.month()) - 1);
+            TwelveGen__c twg = new TwelveGen__c();
+            twg.name= String.valueof(i);
+            twg.start_date__c = df;
+            twg.end_date__c = de;
+            twg.name__c = ac.id;
+           // System.debug(twg);
+            l.add(twg);
+            d = de.addDays(1);
+        }
+        
+    }
+    //System.debug(l);
+  insert l;  
+}

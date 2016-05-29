@@ -1,0 +1,78 @@
+trigger ContactCount on Contact (after insert, before delete, after undelete) 
+{ 
+    //Set of AccountIds to get the set of Accounts which are to be updated
+    set<Id> AccountIDs =new set<Id>();
+    
+    //Map of AccountId and Total Contacts field
+    map <id,Decimal> nmap=new map <id,Decimal>();
+    
+    //Retrieve AccountId and total contacts field
+    List<Account> tot=[Select id,total_Contacts__c from Account];     
+    
+    //Adding value to map
+    if(tot.size()>0 && tot !=null)
+    { 
+      for(Account p: tot)
+        {
+            nmap.put(p.id,p.total_Contacts__c);    
+        } 
+     }   
+    
+    //If the trigger is insert or undelete
+     if(trigger.isInsert || Trigger.isUndelete)
+     {
+         //For every contact that has been inserted
+         for(Contact c: Trigger.new)
+         {     
+             // Total contact field of the Account having contact c
+             Decimal total=nmap.get(c.AccountId);           
+             
+             //if total field is null, assign it 0 as inital value
+              if(total ==null)
+              {
+                total=0;
+              }                                
+             
+             // increment the value  as new contact has been inserted
+             Decimal a=total+1;
+             //update the value in map
+             nmap.put(c.AccountId, a);
+             //add the account id to set
+             AccountIds.add(c.AccountId);
+          }                          
+     }  
+    
+     //If the trigger is delete      
+    if(trigger.isdelete)     
+    {
+        //For every contact that has been inserted
+        for(Contact c: Trigger.old)
+        {
+            // Total contact field of the Account having contact c
+            Decimal total=nmap.get(c.AccountId);
+            if(total!=null)
+            { 
+                 // decrement the value as a contact has been deleted
+                Decimal a=total-1;
+                //update the value in map
+                nmap.put(c.AccountId, a);
+                //add the account id to set
+                AccountIds.add(c.AccountId);
+            }
+        } 
+    }
+            
+     // Retrieve the fields of Account that are to be updated
+  List<Account> Accountlist= [select id ,total_Contacts__c from Account where ID IN :AccountIds]; 
+  
+    if(AccountIDs.size()>0 && AccountIDs!=null)
+    {     
+        for(Account p1: Accountlist)
+        {
+            //Assign new count for the total
+            p1.total_Contacts__c=nmap.get(p1.id);
+        }
+     }
+    //Update the list
+     update Accountlist; 
+}

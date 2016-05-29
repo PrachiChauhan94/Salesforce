@@ -1,0 +1,15 @@
+
+trigger undeladding on child__c (after undelete) {
+    
+    List<Parent__c> l=new List<Parent__c>();
+    
+    for(Child__c c: Trigger.new)
+    {
+         Parent__c p=[Select total__c from Parent__c where id=:c.parentid__c];
+         p.total__c=p.total__c+c.price__c;
+         l.add(p);
+    }
+    
+    update l;   
+
+}
