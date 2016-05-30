@@ -1,0 +1,47 @@
+<apex:page controller="particularaccountmapping" >
+  
+  <apex:form >
+  
+          <apex:pageBlock >
+          
+              <apex:actionRegion >
+              
+                  <apex:selectList value="{!selectedName}" size="1" >
+                  
+                      <apex:selectOptions value="{!AccountNames}" >
+                      </apex:selectOptions>
+                      
+                      <apex:actionSupport event="onchange" rerender="Output">
+                      </apex:actionSupport>
+                      
+                  </apex:selectList>
+                  
+              </apex:actionRegion>
+              
+              
+              <apex:outputPanel id="Output">
+              
+                  <apex:pageBlockSection rendered="{!LEN(selectedName)>0}">
+                  
+                        <apex:pageBlockTable value="{!Contacts}" var="c">
+                        
+                            <apex:column headerValue="Contacts" >  
+              
+                                <apex:outputText value="{!c.FirstName}">
+                                </apex:outputText>
+                                
+                            </apex:column>    
+                        
+                        </apex:pageBlockTable>
+                  
+                  </apex:pageBlockSection>
+              
+              </apex:outputPanel>
+          
+          
+          </apex:pageBlock> 
+  
+  </apex:form>
+  
+</apex:page>
+                            

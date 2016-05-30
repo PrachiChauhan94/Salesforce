@@ -1,0 +1,64 @@
+<apex:page standardcontroller="Account" extensions="RelatedContactList" action="{!showContactList}">
+
+    <apex:form id="frmId">
+
+
+        <apex:pageBlock >
+       
+            <apex:commandButton value="Delete" action="{!erase}" reRender="ptable"  />
+
+                
+                 <apex:commandButton action="{!edit}" id="editButton" value="Edit"/>
+                 
+                    <apex:commandButton action="{!AddNewContact}" id="AddButton" value="Add Contact" reRender="frmId">
+                    <!--    <apex:param value="true" assignTo="{!adding}"/> -->
+                    </apex:commandButton> 
+                    
+                    <apex:commandButton action="{!pdf}" id="pdfButton" value="PDF"/>   
+                  
+                    <apex:pageBlockTable value="{!contactList}" var="c" id="ptable">
+            
+                         <apex:column >
+                            <Apex:facet name="header">
+                                <apex:inputCheckbox value="{!SelectAll}" />
+                            </Apex:facet>
+                            
+                            <apex:inputCheckbox value="{!c.selected}"/>
+                    
+                         </apex:column>
+
+                         <apex:column headerValue="Name">
+                    
+                            <apex:outputField value="{!c.con.lastName}" rendered="{!if(c.selected=true,false,true)}"/>
+                            <apex:inputField value="{!c.con.lastName}" rendered="{!if(c.selected=true,true,false)}" />
+                        
+                        </apex:column>
+                        
+                        <apex:column headerValue="E-Mail">
+                    
+                            <apex:outputField value="{!c.con.email}" rendered="{!if(c.selected=true,false,true)}"/>
+                            <apex:inputField value="{!c.con.email}" rendered="{!if(c.selected=true,true,false)}"/>
+                    
+                        </apex:column>
+                        
+                        <apex:column headerValue="Phone">
+                    
+                            <apex:outputField value="{!c.con.Phone}" rendered="{!if(c.selected=true,false,true)}"/>
+                            <apex:inputField value="{!c.con.Phone}" rendered="{!if(c.selected=true,true,false)}"/>
+                            
+                        </apex:column>
+                        
+                        <apex:column >
+                            <apex:commandButton action="{!save}" id="saveButton" value="Save" rendered="{!if(c.selected=true,true,false)}"/>
+                        </apex:column>
+
+            </apex:pageBlockTable>
+            
+            
+      
+            
+        </apex:pageBlock>
+
+    </apex:form>
+
+</apex:page>

@@ -1,0 +1,232 @@
+<apex:page controller="SearchforOpportunity" >
+  
+  <apex:form >
+  
+          <apex:pageBlock >
+          
+              <apex:actionRegion >
+              
+                  <apex:selectList value="{!selectedOppName}" size="1" >
+                  
+                      <apex:selectOptions value="{!OpportunityName}" >
+                      </apex:selectOptions>
+                      
+                  </apex:selectList>
+                  
+                      
+                  <apex:selectList value="{!selectedStageName}" size="1" >
+                  
+                      <apex:selectOptions value="{!Stage}" >
+                      </apex:selectOptions>
+                      
+                     
+                  </apex:selectList>
+                  
+              
+              
+              
+                  <apex:selectList value="{!selectedAccountName}" size="1" >
+                  
+                      <apex:selectOptions value="{!AccountName}" >
+                      </apex:selectOptions>
+                      
+                      <apex:actionSupport event="onchange" rerender="Output">
+                      </apex:actionSupport>
+                      
+                </apex:selectList>
+                  
+              </apex:actionRegion>
+              
+              <apex:outputPanel id="Output">
+              
+                  <apex:pageBlockSection rendered="{!LEN(selectedOppName)>0 || LEN(selectedStageName)>0 || LEN(selectedAccountName)>0}">
+                  
+                        <apex:pageBlockTable value="{!oppo}" var="c">
+                        
+                            <apex:column headerValue="Opportunity ID" >  
+                            
+                                <apex:outputText value="{!c.id}">
+                                </apex:outputText>
+                            </apex:column>
+                            
+                            <apex:column >
+              
+                                <apex:outputText value="{!c.Name}">
+                                </apex:outputText>
+                                
+                            </apex:column> 
+                            
+                            <apex:column headerValue="OpportunityLineItems">
+                                <apex:pageBlockTable value="{!c.OpportunityLineItems}" var="l">
+                                    <apex:column headerValue="LineItem ID">
+                                        <apex:outputText value="{!l.id}">
+                                        </apex:outputText>
+                                    </apex:column>  
+                                    
+                                    <apex:column headerValue="LineItem Name">
+                                        <apex:outputText value="{!l.Name}">
+                                        </apex:outputText>
+                                    </apex:column>     
+                               </apex:pageBlockTable>
+                             </apex:column>  
+
+                       </apex:pageBlockTable>
+                  
+                  </apex:pageBlockSection>
+              
+              </apex:outputPanel>
+
+  
+       </apex:pageBlock>
+      
+  </apex:form>    
+  
+</apex:page>
+
+
+
+<!--.......................................CONTROLLER.........................................-->		
+
+
+public class SearchforOpportunity {
+
+    //Option List for Opportunity Name
+    List<SelectOption> OpportunityName = new List<SelectOption>();
+
+    //Option List for Stage Name
+    List<SelectOption> Stage = new List<SelectOption>();
+    
+    //Option List for Amount
+    List<SelectOption> Amount = new List<SelectOption>();
+    
+    //Option List for Account Name
+    List<SelectOption> AccountName = new List<SelectOption>();
+    
+    //Selected Opportunity Name
+    public String selectedOppName {get;set;}
+    
+    //Selected Stage Name
+    public String selectedStageName {get;set;}
+    
+    //Selected Amount
+    public Decimal selectedAmount {get;set;}
+    
+    //Selected Account Name
+    public String selectedAccountName {get;set;}
+    
+    //Opportunity List
+    public List<Opportunity> l;
+    
+   
+    //Return Options for Opportunity Names
+    public List<SelectOption> getOpportunityName()
+    {
+        //Name of Opportunity
+        List<Opportunity> o = [Select Name from Opportunity];
+        
+        for(Opportunity o1:o)
+        {
+            String name=o1.Name;
+            OpportunityName.add(new SelectOption(name,name));
+        }   
+        
+        return OpportunityName;
+    }
+    
+    //Return Options for Stage Name
+    public List<SelectOption> getStage()
+    {
+        //Stage Name for an Opportunity
+        List<Opportunity> o = [Select StageName from Opportunity];
+        
+        for(Opportunity o1:o)
+        {
+            String name=o1.StageName;
+            Stage.add(new SelectOption(name,name));
+        }   
+        
+        return Stage;
+    }
+    
+     //Return Options for Amount
+    public List<SelectOption> getAmount()
+    {
+        //Amount for an Opportunity
+        List<Opportunity> o = [Select Amount from Opportunity];
+        
+        for(Opportunity o1:o)
+        {
+            String name= String.valueOf(o1.Amount);
+            if(name!='null')
+            {    Amount.add(new SelectOption(name,name)); }
+        }   
+        
+        return Amount;
+    }
+    
+     //Return Options for Account Name
+    public List<SelectOption> getAccountName()
+    {
+        //AccountIds for an Opportunity
+        List<Opportunity> o = [Select AccountId from Opportunity];
+        
+        List<String> ids=new List<String>();
+        for(Opportunity ob:o)
+        {
+            ids.add(String.valueOf(ob.AccountId));
+        }
+        
+        //Account Name corresponding to these ids
+        List<Account> acc = [select Name from Account where Id=:ids];
+        
+        for(Account a:acc)
+        {
+            String name=a.Name;
+            AccountName.add(new SelectOption(name,name));
+        }  
+        
+        return AccountName;
+    }
+    
+    //Return Opportunity Entries corresponding to the selected fields
+    public List<Opportunity> getoppo()
+    {
+        String f1; 
+        String f2;
+       // String f3; 
+        String f4;
+        String query;
+        
+        if(selectedOppName.length()>0)
+        {    
+            f1= ' name=\''+selectedOppName+'\'';
+        }
+        
+        if(selectedStageName.length()>0)
+        {    
+            f2= ' StageName=\''+selectedStageName+'\'';
+        }
+        
+        
+        if(selectedAccountName.length()>0)
+        {   
+            Account acc= [Select Id from Account where Name=:selectedAccountName];
+            String accountId = acc.Id;
+            f4= ' AccountId=\''+accountId+'\'';
+        }
+        
+        
+        if((selectedOppName.length()>0) && (selectedStageName.length()>0) && (selectedAccountName.length()>0))
+        {    query='SELECT id, Name,(select id, Name from OpportunityLineItems)  FROM OPPORTUNITY where' + f1 + ' and ' + f2 + ' and ' +f4 ; }
+        
+        
+        //List of Opportunity
+         l = Database.query(query);
+         
+         
+        
+        return l;
+        
+   }
+ 
+}

@@ -1,0 +1,65 @@
+<apex:page controller="ContactExcel" contentType="application/vnd.ms-excel#Contact.xls" >
+
+    <apex:form >
+        
+         <apex:pageBlock tabStyle="Contact" >
+        
+              <apex:pageBlockSection >
+              
+                  <apex:pageBlockTable value="{!Con}" var="c">
+                  
+                      <apex:column headerValue="First Name">
+       
+                        <apex:OutputText value="{!c.FirstName}"/>
+                      
+                      </apex:column> 
+          
+                     <apex:column headerValue="Last Name">
+       
+                        <apex:OutputText value="{!c.LastName}"/>
+                      
+                      </apex:column>  
+                      <apex:column headerValue="Account Name">
+       
+                        <apex:OutputText value="{!c.Account.Name}"/>
+                      
+                      </apex:column>    
+                    
+                        </apex:pageBlockTable>
+          
+              </apex:pageBlockSection>
+        
+       </apex:pageBlock>
+   
+   </apex:form>
+ 
+</apex:page>
+
+
+
+<!--........................CONTROLLER.............................-->
+
+public class ContactExcel {
+
+    public List<Contact> Con {get;set;}
+    
+        
+    public ContactExcel()
+    {
+        String ref = ApexPages.currentPage().getparameters().get('id');
+        
+        
+        ref=ref.replace(' ','');
+        ref=ref.replace('(','(\'');
+        ref=ref.replace(')','\')');
+        ref=ref.replace(',','\' , \'');
+        
+        String query='Select id, FirstName, LastName, Account.Name from Contact where id IN' +ref;
+        
+        System.debug('Query--' +query);
+        
+        Con = database.query(query);
+        System.debug(Con);
+ 
+}
+}

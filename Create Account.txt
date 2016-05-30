@@ -1,0 +1,48 @@
+<apex:page standardController="Account" showHeader="false">
+  <apex:form >
+    <apex:pageBlock title=" Account Details">
+                     <apex:pageBlockButtons location="bottom">
+                               <apex:commandButton value="Save" action="{!Save}" />
+                                <apex:commandButton value="Cancel" action="{!Cancel}" immediate="true" />
+                     </apex:pageBlockButtons>
+        
+       
+               <apex:PageblockSection columns="1">  
+            <apex:PageBlockSectionItem >
+                    <apex:outputLabel value="Name" />
+                                  <apex:actionRegion >
+                                              <apex:inputField value="{!Account.Name}">
+                                                  <apex:actionSupport event="onchange" reRender="block1" />
+                                           </apex:inputField>
+                                    </apex:actionRegion>
+                    </apex:PageBlockSectionItem>
+      </apex:PageblockSection>
+      
+      
+                    <apex:pageBlockSection columns="1">
+                              <apex:outputPanel id="block1">
+                                       <apex:pageBlockSection rendered="{!Account.Name!=''}">
+                                                <apex:inputField value="{!Account.SLA__c}" >
+                                                <apex:actionSupport event="onchange" reRender="block2" />
+                                                </apex:inputfield>
+                                       </apex:pageBlockSection>
+                                  </apex:outputPanel>       
+                    </apex:pageBlockSection>  
+                    
+                           
+                         <apex:pageBlockSection columns="1">
+                              <apex:outputPanel id="block2">
+                                       <apex:pageBlockSection rendered="{!Account.SLA__c=='Gold'}">
+                                               <apex:inputField value="{!Account.Phone}" />
+                                                
+                                       </apex:pageBlockSection>
+                                  </apex:outputPanel>
+                         </apex:pageBlockSection>          
+                                                                            
+        </apex:pageBlock>
+        
+         
+        
+  </apex:form>
+</apex:page>
+                                        

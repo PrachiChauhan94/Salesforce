@@ -1,0 +1,166 @@
+<apex:page standardcontroller="Opportunity" extensions="RelatedOLI" action="{!showOLI}">
+<body>
+ 
+   <apex:form id="frmId">
+
+ 
+        <apex:pageBlock >
+        
+           <div id="target">
+            <apex:pageBlockTable value="{!OppLineItemList}" var="c" id="ptable">
+            
+                
+                        
+                         <apex:column >
+
+                            <Apex:facet name="header">
+                                <apex:inputCheckbox value="{!SelectAll}" />
+                            </Apex:facet>
+                            
+                            
+ 
+                            <apex:inputCheckbox value="{!c.selected}">
+                            </apex:inputCheckbox>
+                          
+                                               
+                         </apex:column>
+                         
+                         
+                               
+                         <apex:column headerValue="Name">
+                    
+                            <apex:outputField value="{!c.opp.Name}" />
+                          
+                        </apex:column>
+                        
+                        
+                        <apex:column headerValue="Quantity">
+                    
+                            <apex:outputField value="{!c.opp.Quantity}" />
+                           
+                        </apex:column>
+                        
+                        <apex:column headerValue="Unit Price">
+                    
+                            <apex:outputField value="{!c.opp.UnitPrice}" />
+                            
+                        </apex:column>
+                        
+                        
+            </apex:pageBlockTable> 
+              
+            </div>
+            <apex:actionFunction name="myfunction2" action="{!deleteOLI}" reRender="ptable"/>
+            
+<apex:includeScript value="{!URLFOR($Resource.Context)}" />
+
+ <script>
+ 
+ var menu = [{
+        name: 'create',
+        title: 'create button',
+        fun: function () {
+            alert('i am add button')
+        }
+    }, {
+        name: 'update',
+        title: 'update button',
+        fun: function () {
+            alert('i am update button')
+        }
+    }, {
+        name: 'delete',
+        title: 'delete button',
+        fun: function () {
+            alert('i am delete button')
+        }
+    }];
+
+$('#target').contextMenu(menu);
+ 
+ function myFunction() {
+    myfunction2();
+    }
+ </script>
+ 
+        </apex:pageBlock>
+ 
+    </apex:form>
+</body>
+</apex:page>
+
+<!--.....................................CONTROLLER...................-->
+
+public class RelatedOLI
+{
+      public string OppID = '';
+      public list<oOpportunity> OppLineItemList {get;set;}
+      public Boolean selectAll {get; set;}
+      
+      public RelatedOLI(ApexPages.StandardController stdController)
+      {
+            selectAll= false;
+      }
+        
+    
+      public void showOLI()
+      {
+            OppID = System.CurrentPageReference().getParameters().get('id');
+            OppLineItemList = new List<oOpportunity>();
+            
+            for(OpportunityLineItem c: [select Id,Name,Quantity, UnitPrice from OpportunityLineItem where OpportunityID=:OppID])
+            {
+                 OppLineItemList.add(new oOpportunity(c));
+            }
+            
+      }
+      
+      public void deleteOLI()
+      {
+            List<OpportunityLineItem> selectedOLI = new List<OpportunityLineItem>();
+            List<OpportunityLineItem> selectAllOLI = new List<OpportunityLineItem>();
+            
+            for(oOpportunity cCon: OppLineItemList)
+            {
+                  if(cCon.selected == true)
+                  {
+                      
+                        selectedOLI.add(cCon.opp);
+                  }
+            }
+            delete SelectedOLI;
+            
+             for(oOpportunity cCon: OppLineItemList)
+             {
+                 if(SelectAll==true)
+                 {
+                      selectAllOLI.add(cCon.opp);
+                 }
+             
+             }
+             delete SelectAllOLI;
+            showOLI();
+            //null;
+      }
+    
+      public class oOpportunity
+      {
+            
+            public OpportunityLineItem opp {get; set;}
+            public Boolean selected {get; set;}
+            
+    
+            public oOpportunity(OpportunityLineItem c)
+            {
+                  opp = c;
+                  selected = false;
+             }
+             
+             public oOpportunity(OpportunityLineItem ch,Boolean c)
+            {
+                  opp = ch;
+                  selected = c;
+             }
+      }
+    
+}

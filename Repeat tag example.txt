@@ -1,0 +1,18 @@
+<apex:page controller="dataTableCon">
+
+    <apex:pageBlock title="My Content">
+{!accounts}
+       
+          <apex:repeat value="{!accounts}" var="account" id="theRepeat">
+
+        <apex:outputText value="{!account.name}" id="theValue"/><br/>
+        
+         <apex:outputText value="{!account.owner.name}" id="theValue2"/><br/>
+
+    </apex:repeat>
+
+       
+
+    </apex:pageBlock> 
+
+</apex:page>

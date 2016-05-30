@@ -1,0 +1,22 @@
+<apex:page controller="accontact" tabStyle="Account"  showHeader="false" renderAs="pdf" >
+  
+<apex:pageBlock title="Account and their Contact" >
+ 
+<apex:pageBlockTable value="{!mp}" var="s">
+
+<apex:column headerValue="Account.Name" >
+<apex:outputText value="{!s.name}"/>
+</apex:column>
+
+<apex:column headerValue="Contacts" rendered="{!s.Contacts.size!=0}">
+<apex:pageBlockTable value="{!s.Contacts}" var="a">
+<apex:column headerValue="Contacts">
+<apex:outputText value="{!a.FirstName}"/> 
+</apex:column>
+</apex:pageBlockTable>
+</apex:column>
+
+ 
+</apex:pageBlockTable>
+</apex:pageBlock>
+</apex:page>

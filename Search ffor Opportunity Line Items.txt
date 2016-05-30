@@ -1,0 +1,187 @@
+<apex:page controller="opportunitySearch" >
+  
+  <apex:form >
+  
+     <apex:pageBlock title="Search for Opportunity LineItems" mode="inlineEdit" >
+          
+             <apex:pageBlockSection >
+               
+                  <apex:inputField value="{!oppo.Account.Name}" required="false"/>
+                  <apex:inputField value="{!oppo.StageName}" required="false"/>
+                  <apex:inputField value="{!oppo.CloseDate}" required="false"/>
+                  <apex:inputField value="{!oppo.Amount}" required="false"/>
+              
+                  <apex:commandButton value="Search" action="{!search}" reRender="OUTPUT" />
+                  
+              </apex:pageBlockSection>  
+              
+             <apex:commandLink value="Add" action="{!add}" reRender="addo"  >
+                    
+                   <apex:param name="addA" value="true" assignTo="{!adding}"  />
+                    
+             </apex:commandLink>
+                
+              <apex:outputPanel id="addo"> 
+              <apex:outputPanel rendered="{!LEN(adding)>0}"> 
+                                     
+                <apex:pageBlockSection title="Opportunity Line Item Detail">
+                <apex:inputField value="{!o.Opportunity.Name}" />
+                <apex:inputField value="{!o.Product2.Name}" />
+                <apex:inputText value="{!o.ProductCode}" />
+                <apex:inputText value="{!o.ListPrice}" />
+                <apex:inputField value="{!o.UnitPrice}" />
+                <apex:inputField value="{!o.Quantity}" />
+                <apex:inputField value="{!o.ServiceDate}" />
+                <apex:inputField value="{!o.TotalPrice}" />
+                <apex:inputField value="{!o.Description}" />
+                
+           {!o.Opportunity.Name}{!o.Product2.Name}{!o.ProductCode}
+               <apex:commandLink value="Save" action="{!save2}">
+                    
+                </apex:commandLink>
+                
+                 </apex:pageBlockSection>
+                                   
+             </apex:outputPanel> 
+              </apex:outputPanel> 
+              
+                    
+                               
+           
+           
+             <apex:outputPanel id="OUTPUT" title="Result" >
+             
+             <apex:outputPanel rendered="{!l.size>0}">
+                 
+                     
+                   <apex:repeat value="{!l}" var="a"  >
+                   
+                       <table border="0" cellpadding="8" align="center" bgcolor=" #FAEBD7">
+                           <tr>
+                               <th>Name</th>
+                               <th>Account Name</th>
+                               <th>Stage Name</th>
+                               <th>Close Date</th>
+                               <th>Amount</th>
+                          </tr>
+                          
+                          <tr>
+                               <td>  
+                                    <apex:outputField value="{!a.Name}" title="Name"> </apex:outputField>
+                               </td>
+                               
+                               <td>
+                                    <apex:outputField value="{!a.Account.Name}" title="Account Name"> </apex:outputField>
+                               </td>
+                               
+                               <td>
+                                    <apex:outputField value="{!a.StageName}" title="Stage Name"> </apex:outputField>
+                               </td>
+                               
+                               <td>
+                                    <apex:outputField value="{!a.CloseDate}" title="Close Date"> </apex:outputField>
+                              </td>
+                              
+                              <td>
+                                   <apex:outputField value="{!a.Amount}" title="Amount"> </apex:outputField>
+                              </td>
+                              
+                        </tr>
+                    
+                   </table>
+                    
+                   
+                  
+                            
+                  <table border="1" cellpadding="8" align="center">
+                      
+                       <tr>
+                            <th>Action</th>
+                            <th>Line Item ID</th>
+                            <th>Line Item Name</th>
+                            <th>Line Item Quantity</th>
+                            <th>Line Item UnitPrice</th>
+                      </tr>   
+                                        
+                      <apex:repeat value="{!a.OpportunityLineItems}" var="z">
+                                         
+                             <tr>
+                                 <td>
+                                        <apex:commandLink value="Delete" action="{!deleteitem}" reRender="OUTPUT" >
+ 
+                                                     <apex:param name="id" value="{!z.id}" assignTo="{!deleteID}" />
+                                               
+                                        </apex:commandLink>|
+                                        
+                                               
+                                        <apex:commandLink id="editButton" value="Edit" action="{!edititem}" reRender="edit1,edit2">
+ 
+                                               <apex:param name="id1" value="{!z.id}" assignTo="{!editID}" />
+                                                         
+                                         </apex:commandLink>
+                                         
+                                </td>
+                                
+                                          
+                                 <td>
+                                       
+                                       <apex:outputField value="{!z.Id}" > </apex:outputField>
+                                         
+                                 </td>
+                                          
+                                 <td>
+                                              
+                                       <apex:outputField value="{!z.Name}"> </apex:outputField>
+                                         
+                                </td>
+                                          
+                                <td>
+                                
+                                       <apex:outputField id="edit1" value="{!z.Quantity}" >
+                                                          
+                                               <apex:inlineEditSupport disabled="false" rendered="{!LEN(editID)>0}"  />
+                                               
+                                                <apex:param name="editA" value="{!z.Quantity}" assignTo="{!editedQuantity}"  />
+                                                       
+                                      </apex:outputField>
+                                      
+                               </td>
+                                         
+                                <td>
+                                
+                                       <apex:outputField id="edit2"  value="{!z.UnitPrice}">
+                                                          
+                                                 <apex:inlineEditSupport disabled="false" rendered="{!LEN(editID)>0}" />
+                                                 
+                                                 <apex:param name="editB" value="{!z.UnitPrice}" assignTo="{!editedUnitPrice}" />
+                                                 
+                                       </apex:outputField>
+                                         
+                                </td>
+                                
+                                <td>
+                                       <apex:commandLink id="saveButton" value="Save" action="{!save}" reRender="OUTPUT" >
+                                              
+                                       </apex:commandLink>
+                                       
+                               </td>
+                  </tr>  
+                
+                                   
+                                   
+            </apex:repeat>
+                             
+         </table>      <br></br> <br></br>
+                     
+       </apex:repeat>
+                       
+    </apex:outputPanel>  
+
+             
+  </apex:outputPanel>  
+
+ </apex:pageBlock>
+          
+</apex:form>
+  
+</apex:page>

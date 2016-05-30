@@ -1,0 +1,36 @@
+<apex:page controller="ContactPDF" renderAs="pdf" >
+
+    <apex:form >
+        
+         <apex:pageBlock tabStyle="Contact" >
+        
+              <apex:pageBlockSection >
+              
+                  <apex:pageBlockTable value="{!Con}" var="c">
+                  
+                      <apex:column headerValue="First Name">
+       
+                        <apex:OutputText value="{!c.FirstName}"/>
+                      
+                      </apex:column> 
+          
+                     <apex:column headerValue="Last Name">
+       
+                        <apex:OutputText value="{!c.LastName}"/>
+                      
+                      </apex:column>  
+                      <apex:column headerValue="Account Name">
+       
+                        <apex:OutputText value="{!c.Account.Name}"/>
+                      
+                      </apex:column>    
+                    
+                        </apex:pageBlockTable>
+          
+              </apex:pageBlockSection>
+        
+       </apex:pageBlock>
+   
+   </apex:form>
+ 
+</apex:page>
